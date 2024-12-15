@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="stylesheet.css">
+    <title>Dashboard</title>
+
+</head>
+<body>
+    <header>
+        <h1>Welcome Client!</h1> 
+      
+        <nav>
+            <button onclick="showClientDashboard()">Client Dashboard</button>
+            <a href="/">Logout</a>
+        </nav>
+    </header>
+
+    <!-- Button container below header -->
+    <div class="button-container">
+        <button onclick="toggleSection('quotes-section')">View Quotes</button>
+        <button onclick="toggleSection('orders-section')">View Orders</button>
+        <button onclick="toggleSection('bills-section')">View Bills</button>
+        <button onclick="redirectToQuoteRequest()">Submit a Quote Request</button>
+    </div>
+
+    <!-- Client Dashboard Content -->
+    <div class="content-section" id="quotes-section">
+        <h3>Client Quotes</h3>
+        <div id="client-quotes-content"></div>
+    </div>
+
+    <div class="content-section" id="orders-section">
+        <h3>Client Orders</h3>
+        <div id="client-orders-content"></div>
+    </div>
+
+    <div class="content-section" id="bills-section">
+        <h3>Client Bills</h3>
+        <div id="client-bills-content"></div>
+    </div>
+
+    <script>
+        // Show Client Dashboard
+        function showClientDashboard() {
+            // Show the dashboard (you may add additional functionality here if needed)
+            alert("Client Dashboard is now visible.");
+        }
+
+        // Toggle sections visibility and load content for each section
+        function toggleSection(sectionId) {
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => {
+                if (section.id === sectionId) {
+                    section.classList.toggle('active');
+                } else {
+                    section.classList.remove('active');
+                }
+            });
+
+            // Load content for the active section
+            if (sectionId === 'quotes-section') {
+                loadClientQuotes();
+            } else if (sectionId === 'orders-section') {
+                loadClientOrders();
+            } else if (sectionId === 'bills-section') {
+                loadClientBills();
+            }
+        }
+
+        // Load client quotes
+        async function loadClientQuotes() {
+            const contentDiv = document.getElementById('client-quotes-content');
+            contentDiv.innerHTML = '<p>Loading client quotes...</p>';
+
+            try {
+                const response = await fetch('/quotes');
+                const quotes = await response.json();
+                contentDiv.innerHTML = quotes
+                    .map(q => `
+                        <div>
+                            <p><strong>Quote ID:</strong> ${q.id}</p>
+                            <p><strong>Property Address:</strong> ${q.propertyAddress}</p>
+                            <p><strong>Status:</strong> ${q.status}</p>
+                        </div>
+                    `)
+                    .join('');
+            } catch (error) {
+                contentDiv.innerHTML = '<p>Error loading client quotes.</p>';
+            }
+        }
+
+        // Load client orders
+        async function loadClientOrders() {
+            const contentDiv = document.getElementById('client-orders-content');
+            contentDiv.innerHTML = '<p>Loading client orders...</p>';
+
+            try {
+                const response = await fetch('/orders');
+                const orders = await response.json();
+                contentDiv.innerHTML = orders
+                    .map(o => `
+                        <div>
+                            <p><strong>Order ID:</strong> ${o.id}</p>
+                            <p><strong>Status:</strong> ${o.status}</p>
+                            <p><strong>Content:</strong> ${o.content}</p>
+                        </div>
+                    `)
+                    .join('');
+            } catch (error) {
+                contentDiv.innerHTML = '<p>Error loading client orders.</p>';
+            }
+        }
+
+        // Load client bills
+        async function loadClientBills() {
+            const contentDiv = document.getElementById('client-bills-content');
+            contentDiv.innerHTML = '<p>Loading client bills...</p>';
+
+            try {
+                const response = await fetch('/bills');
+                const bills = await response.json();
+                contentDiv.innerHTML = bills
+                    .map(b => `
+                        <div>
+                            <p><strong>Bill ID:</strong> ${b.id}</p>
+                            <p><strong>Amount:</strong> $${b.amount}</p>
+                            <p><strong>Status:</strong> ${b.status}</p>
+                        </div>
+                    `)
+                    .join('');
+            } catch (error) {
+                contentDiv.innerHTML = '<p>Error loading client bills.</p>';
+            }
+        }
+
+        // Redirect to quote request page
+        function redirectToQuoteRequest() {
+            window.location.href = '/quoteRequest'; // Replace with the correct path
+        }
+    </script>
+</body>
+</html>
