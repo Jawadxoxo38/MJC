@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Negotiate Quote - Client</title>
+    <link rel="stylesheet" href="stylesheet.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Negotiate Quote</h1>
+
+        <!-- Quote Details Section -->
+        <div class="section">
+            <h3>Your Current Quote</h3>
+            <div class="info-row">
+                <strong>Property Address:</strong> <span id="propertyAddress">Loading...</span>
+            </div>
+            <div class="info-row">
+                <strong>Square Feet:</strong> <span id="squareFeet">Loading...</span>
+            </div>
+            <div class="info-row">
+                <strong>Proposed Price:</strong> $<span id="proposedPrice">Loading...</span>
+            </div>
+        </div>
+
+        <!-- Negotiation Form Section -->
+        <form id="negotiationForm">
+            <div class="form-group">
+                <label for="proposedPriceInput">Proposed Price:</label>
+                <input type="number" id="proposedPriceInput" required>
+            </div>
+
+            <div class="form-group">
+                <label for="negotiationNote">Negotiation Note:</label>
+                <textarea id="negotiationNote" required></textarea>
+            </div>
+
+            <button type="submit" class="btn">Submit Negotiation</button>
+        </form>
+
+        <div class="back-link">
+            <p><a href="/client_dashboard.html">Back to Dashboard</a></p>
+        </div>
+    </div>
+
+    <script>
+        // Fetch quote details dynamically
+        async function fetchQuoteInfo() {
+            const quoteId = 1; // Replace with actual quoteId from session or URL
+            try {
+                const response = await fetch(`http://localhost:3000/api/quote/${quoteId}`);
+                const quoteData = await response.json();
+
+                if (response.ok) {
+                    document.getElementById('propertyAddress').textContent = quoteData.address;
+                    document.getElementById('squareFeet').textContent = quoteData.squareFeet;
+                    document.getElementById('proposedPrice').textContent = quoteData.proposedPrice;
+                } else {
+                    alert('Error fetching quote data');
+                }
+            } catch (error) {
+                console.error('Error fetching quote data:', error);
+                alert('Error fetching quote data');
+            }
+        }
+
+        // Handle negotiation form submission
+        document.getElementById('negotiationForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const proposedPrice = document.getElementById('proposedPriceInput').value;
+            const negotiationNote = document.getElementById('negotiationNote').value;
+            const quoteId = 1; // Replace with actual quoteId
+
+            const response = await fetch(`http://localhost:3000/api/quote/${quoteId}/negotiate`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    proposedPrice,
+                    negotiationNote
+                })
+            });
+
+            if (response.ok) {
+                alert('Negotiation submitted successfully!');
+                window.location.href = '/client_dashboard.html';
+            } else {
+                alert('Error submitting negotiation.');
+            }
+        });
+
+        fetchQuoteInfo();
+    </script>
+</body>
+</html>

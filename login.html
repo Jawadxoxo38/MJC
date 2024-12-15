@@ -1,0 +1,55 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Login</title>
+    <link rel="stylesheet" href="stylesheet.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Driveway Sealing Client Services</h1>
+
+       
+        <h1>Log In to Your Client Dashboard</h1>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <input type="email" id="email" placeholder="Email" required>
+                <input type="password" id="password" placeholder="Password" required>
+            </div>
+            <button type="submit">Login</button>
+        </form>
+        <div class="form-footer">
+            <p>Don't have an account? <a href="register.html">Register here</a></p>
+        </div>
+    </div>
+
+    <script>
+       document.getElementById('loginForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const formData = {
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value
+            };
+
+            const response = await fetch('http://localhost:3000/clients/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                window.location.href = "client_dashboard.html"; // Redirect to the general client dashboard
+            } else {
+                alert(data.message || 'Invalid login credentials');
+            }
+        });
+    </script>
+</body>
+</html>
